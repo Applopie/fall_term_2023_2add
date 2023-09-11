@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(int a)
+int main(int a, char **argv)
 {
     a = 15;
     ofstream fout("numbers.txt");
