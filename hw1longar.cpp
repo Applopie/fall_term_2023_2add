@@ -42,4 +42,9 @@ private:
             this->removingzeros();
         }
     }
+
+    void removingzeros()
+    {
+        while
+    }
 };
