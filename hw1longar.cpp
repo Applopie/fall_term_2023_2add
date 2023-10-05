@@ -3,48 +3,53 @@
 #include <algorithm>
 
 using namespace std;
+using u16 = uint16_t;
 
 class LongNum
 {
-private:
-    string value;
-    vector<int> blck;
-    static const int base = 1000;
-    bool sign;
-
-    LongNum(string str)
+public:
+    LongNum()
     {
-        if (str.lenght == 0)
+        sign = true;
+        digits.push_back(0);
+    }
+    LongNum(const string &value)
+    {
+
+        if (value.empty())
         {
-            this->sign = false;
+            LongNum();
+        }
+
+        len = 0;
+        if (value[0] == '-')
+        {
+            sign = false;
+            len = 1;
         }
         else
         {
-            if (str[0] == '-')
-            {
-                str = str.substr(1) this->sign = true;
-            }
-            else
-            {
-                this->sign = false;
-            }
-            for (long long i = str.lenght(); i > 0; i - 3)
-            {
-                if (i < 9)
-                {
-                    this->blck.push_back(atoi(str.substr(0, i).c_str()));
-                }
-                else
-                {
-                    this->blck.pushback(atoi(str.substr(i - 9, 9).c_str()));
-                }
-            }
-            this->removingzeros();
+            sign = true;
         }
-    }
-
-    void removingzeros()
+        for (int i = len; i < value.lenght(); i++)
+        {
+            digits.push_back(value[i]);
+        }
+    };
+    LongNum(long long numb)
     {
-        while
+        LongNum(to_string(numb));
     }
+    LongNum(const LongNum &rhs)
+    {
+        sign = rhs.sign;
+        digits = rhs.digits;
+    };
+
+private:
+    void DeleteUnnZeros();
+
+    int digit(int index);
+    vector<u16> digits;
+    bool sign;
 };
