@@ -48,6 +48,40 @@ public:
         digits = rhs.digits;
     };
 
+    LongNum(LongNum &&rhs) // replacement
+        : digits(rhs.digits), sign(rhs.sign)
+    {
+        rhs.digits.clear();
+    }
+
+    LongNum &operator=(const LongNum &rhs) // assignment by copying
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+        else
+        {
+            sign = rhs.sign;
+            digits = rhs.digits;
+            return *this;
+        }
+    }
+
+    LongNum &operator=(const LongNum &rhs) // assignment by replacement
+    {
+        if (this == &rhs)
+        {
+            return *this;
+        }
+        else
+        {
+            swap(sign, rhs.sign);
+            swap(digits, rhs.digits);
+            return *this;
+        }
+    }
+
 private:
     void DeleteUnnZeros()
     {
