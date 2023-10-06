@@ -91,7 +91,11 @@ private:
         }
     };
 
-    int digit(int index);
     vector<u16> digits;
     bool sign;
+
+    LongNum summarizing(const LongNum &rhs, const LongNum &lhs)
+    {
+        LongNum result;
+    }
 };
