@@ -8,12 +8,12 @@ using u16 = uint16_t;
 class LongNum
 {
 public:
-    LongNum()
+    LongNum() // zero constructor
     {
         sign = true;
         digits.push_back(0);
     }
-    LongNum(const string &value)
+    LongNum(const string &value) // main constructor
     {
 
         if (value.empty())
@@ -38,11 +38,11 @@ public:
 
         DeleteUnnZeros();
     };
-    LongNum(long long numb)
+    LongNum(long long numb) // constructor for suitable numbers
     {
         LongNum(to_string(numb));
     }
-    LongNum(const LongNum &rhs)
+    LongNum(const LongNum &rhs) // copying mechanism
     {
         sign = rhs.sign;
         digits = rhs.digits;
