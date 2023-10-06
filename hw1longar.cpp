@@ -35,6 +35,8 @@ public:
         {
             digits.push_back(value[i]);
         }
+
+        DeleteUnnZeros();
     };
     LongNum(long long numb)
     {
@@ -47,7 +49,10 @@ public:
     };
 
 private:
-    void DeleteUnnZeros();
+    void DeleteUnnZeros()
+    {
+        while (digits.size > 1 && digits.at(0) == 0)
+    };
 
     int digit(int index);
     vector<u16> digits;
