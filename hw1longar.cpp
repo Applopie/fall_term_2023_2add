@@ -33,7 +33,7 @@ public:
         }
         for (int i = len; i < value.lenght(); i++)
         {
-            digits.push_back(value[i]);
+            digits.push_back(value.at(i));
         }
 
         DeleteUnnZeros();
@@ -52,6 +52,9 @@ private:
     void DeleteUnnZeros()
     {
         while (digits.size > 1 && digits.at(0) == 0)
+        {
+            digits.erase(digits.begin(), digits.begin() + 1)
+        }
     };
 
     int digit(int index);
