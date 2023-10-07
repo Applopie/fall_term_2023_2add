@@ -82,7 +82,14 @@ public:
         }
     }*/
 
-    LongNum &operator+(LongNum &rhs) const
+    bool operator==(const LongNum &rhs) const
+        bool
+        operator>(const LongNum &rhs) const
+        bool
+        operator<(const LongNum &rhs) const
+
+        LongNum
+        operator+(LongNum &rhs) const
     {
         if ((sign && rhs.sign) || (!sign && !rhs.sign))
         {
@@ -92,9 +99,51 @@ public:
         {
             if (digits.size() == rhs.digits.size())
             {
-                if
+                if (*this > -rhs)
+                {
+                    return subtraction(*this, rhs);
+                }
+                else
+                {
+                    return -subtraction(-rhs, -*this);
+                }
+            }
+            else if (digits.size() > rhs.digits.size())
+            {
+                return subtraction(*this, rhs);
+            }
+            else
+            {
+                return -subtraction(-rhs, -*this);
             }
         }
+        if (!sign && rhs.sign)
+        {
+            if (digits.size() == rhs.digits.size())
+            {
+                if (-*this > rhs)
+                {
+                    return -subtraction(-*this, -rhs);
+                }
+                else
+                {
+                    return subtraction(rhs, *this);
+                }
+            }
+            else if (digits.size() > rhs.digits.size())
+            {
+                return -subtraction(-*this, -rhs);
+            }
+            else
+            {
+                return subtraction(rhs, *this);
+            }
+        }
+        return rhs;
+    }
+
+    LongNum operator-(LongNum &rhs) const
+    {
     }
 
 private:
