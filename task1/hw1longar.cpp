@@ -227,6 +227,14 @@ public:
         return false;
     }
 
+    LongNum operator-() const
+    {
+        LongNum res = *this;
+        res.sign = !sign;
+
+        return res;
+    }
+
     LongNum operator+(LongNum &rhs) const
     {
         if ((sign && rhs.sign) || (!sign && !rhs.sign))
@@ -347,7 +355,7 @@ private:
         }
     };
 
-    LongNum summarizing(const LongNum &rhs, const LongNum &lhs)
+    LongNum summarizing(const LongNum &rhs, const LongNum &lhs) const
     {
         LongNum result;
         u16 rhsl = rhs.digits.size();
@@ -391,7 +399,7 @@ private:
         return result;
     }
 
-    LongNum subtraction(const LongNum &rhs, const LongNum &lhs)
+    LongNum subtraction(const LongNum &rhs, const LongNum &lhs) const
     {
         LongNum result;
         u16 rhsl = rhs.digits.size();
