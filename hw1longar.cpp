@@ -83,13 +83,149 @@ public:
     }*/
 
     bool operator==(const LongNum &rhs) const
-        bool
-        operator>(const LongNum &rhs) const
-        bool
-        operator<(const LongNum &rhs) const
+    {
+        if ((sign != rhs.sign) || (digits.size() != rhs.digits.size()))
+        {
+            return false;
+        }
+        for (int i = 0; i < digits.size(); i++)
+        {
+            if (digits.at(i) != rhs.digits.at(i))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    bool operator>(const LongNum &rhs) const
+    {
+        if (sign && !rhs.sign)
+        {
+            return true;
+        }
+        if (!sign && rhs.sign)
+        {
+            return false;
+        }
 
-        LongNum
-        operator+(LongNum &rhs) const
+        if (sign)
+        {
+            if (digits.size() > rhs.digits.size())
+            {
+                return true;
+            }
+            else if (digits.size() < rhs.digits.size())
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 0; i < digits.size(); i++)
+                {
+                    if (digits.at(i) > rhs.digits.at(i))
+                    {
+                        return true;
+                    }
+                    else if (digits.at(i) < rhs.digits.at(i))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (!sign)
+        {
+            if (digits.size() > rhs.digits.size())
+            {
+                return false;
+            }
+            else if (digits.size() < rhs.digits.size())
+            {
+                return true;
+            }
+            else
+            {
+                for (int i = 0; i < digits.size(); i++)
+                {
+                    if (digits.at(i) > rhs.digits.at(i))
+                    {
+                        return false;
+                    }
+                    else if (digits.at(i) < rhs.digits.at(i))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    bool operator<(const LongNum &rhs) const
+    {
+        if (sign && !rhs.sign)
+        {
+            return false;
+        }
+        if (!sign && rhs.sign)
+        {
+            return true;
+        }
+
+        if (sign)
+        {
+            if (digits.size() > rhs.digits.size())
+            {
+                return false;
+            }
+            else if (digits.size() < rhs.digits.size())
+            {
+                return true;
+            }
+            else
+            {
+                for (int i = 0; i < digits.size(); i++)
+                {
+                    if (digits.at(i) > rhs.digits.at(i))
+                    {
+                        return false;
+                    }
+                    else if (digits.at(i) < rhs.digits.at(i))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        if (!sign)
+        {
+            if (digits.size() > rhs.digits.size())
+            {
+                return true;
+            }
+            else if (digits.size() < rhs.digits.size())
+            {
+                return false;
+            }
+            else
+            {
+                for (int i = 0; i < digits.size(); i++)
+                {
+                    if (digits.at(i) > rhs.digits.at(i))
+                    {
+                        return true;
+                    }
+                    else if (digits.at(i) < rhs.digits.at(i))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    LongNum
+    operator+(LongNum &rhs) const
     {
         if ((sign && rhs.sign) || (!sign && !rhs.sign))
         {
@@ -144,6 +280,32 @@ public:
 
     LongNum operator-(LongNum &rhs) const
     {
+        if ((sign && !rhs.sign) || (!sign && rhs.sign))
+        {
+            return summarizing(*this, rhs);
+        }
+        else if (sign)
+        {
+            if (digits.size() >= rhs.digits.size())
+            {
+                return subtraction(*this, rhs);
+            }
+            else
+            {
+                return -subtraction(-rhs, -*this);
+            }
+        }
+        else if (!sign)
+        {
+            if (digits.size() <= rhs.digits.size())
+            {
+                return subtraction(rhs, *this);
+            }
+            else
+            {
+                return -subtraction(-*this, -rhs);
+            }
+        }
     }
 
 private:
