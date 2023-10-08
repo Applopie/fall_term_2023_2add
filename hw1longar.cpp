@@ -487,3 +487,23 @@ private:
         return result;
     }
 };
+
+std::ostream &operator<<(std::ostream &os, const LongNum &rhs)
+{
+    if (rhs.length == 0)
+    {
+        return os;
+    }
+
+    if (!rhs.sign)
+    {
+        os << '-';
+    }
+    for (int i = 0; i < rhs.digits.size(); i++)
+    {
+        os << rhs.digits.at(i);
+    }
+    os << '\n';
+
+    return os;
+}
