@@ -224,8 +224,7 @@ public:
         return false;
     }
 
-    LongNum
-    operator+(LongNum &rhs) const
+    LongNum operator+(LongNum &rhs) const
     {
         if ((sign && rhs.sign) || (!sign && !rhs.sign))
         {
@@ -305,6 +304,29 @@ public:
             {
                 return -subtraction(-*this, -rhs);
             }
+        }
+    }
+
+    LongNum operator*(LongNum &lhs) const
+    {
+        LongNum result;
+        size_t index = 0;
+        rhsl = digits.size();
+        lhsl = lhs.digits.size();
+
+        LongNum temp;
+
+        if ((sign && lhs.sign) || (!sign && !lhs.sign))
+        {
+            result.sign = true;
+        }
+        if ((!sign && lhs.sign) || (sign && !lhs.sign))
+        {
+            result.sign = false;
+        }
+
+        if (rhsl >= lhsl)
+        {
         }
     }
 
@@ -432,6 +454,30 @@ private:
             {
                 break;
             }
+        }
+
+        LongNum multiply(unsigned int rhs) const
+        {
+            LongNum result;
+            result.digits.clear();
+            result.sign = true;
+            unsigned int backup = 0;
+            for (int i = digits.size() - 1; i >= 0; i--)
+            {
+                unsigned int digitproduct = digits.at(i) * rhs + backup;
+                if (digitproduct > 9)
+                {
+                    backup = digitproduct / 10;
+                    digitproduct %= 10;
+                }
+                else
+                    carry = 0;
+                result.digits.push_back(digitproduct);
+            }
+            if (carry != 0)
+                result.digits.push_back(carry);
+            std::reverse(result.digits.begin(), result.digits.end());
+            return result;
         }
 
         return result;
