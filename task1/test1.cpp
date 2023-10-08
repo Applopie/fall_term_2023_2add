@@ -5,13 +5,13 @@
 
 TEST_CASE()
 {
-    LongNum a{"544342"};
-    LongNum b{"1235444"};
-    LongNum arev{"-544342"};
-    LongNum x{"13"};
-    LongNum c{"1779786"};
-    LongNum d{"-544355"};
-    LongNum e{"7076446"};
+    LongNum a("544342");
+    LongNum b("1235444");
+    LongNum arev("-544342");
+    LongNum x("13");
+    LongNum c("1779786");
+    LongNum d("-544355");
+    LongNum e("7076446");
 
     REQUIRE(a + b == c);
     REQUIRE(a * x == e);

@@ -36,7 +36,8 @@ public:
         }
         for (int i = len; i < value.length(); i++)
         {
-            digits.push_back(value.at(i));
+            int a = value[i] - '0';
+            digits.push_back(a);
         }
 
         DeleteUnnZeros();
@@ -358,6 +359,7 @@ private:
     LongNum summarizing(const LongNum &rhs, const LongNum &lhs) const
     {
         LongNum result;
+        result.digits.clear();
         u16 rhsl = rhs.digits.size();
         u16 lhsl = lhs.digits.size();
         size_t index = 0;
@@ -402,6 +404,7 @@ private:
     LongNum subtraction(const LongNum &rhs, const LongNum &lhs) const
     {
         LongNum result;
+        result.digits.clear();
         u16 rhsl = rhs.digits.size();
         u16 lhsl = lhs.digits.size();
         size_t index = 0;
@@ -515,3 +518,15 @@ std::ostream &operator<<(std::ostream &os, const LongNum &rhs)
 
     return os;
 }
+
+/*int main()
+{
+    LongNum a("154");
+    LongNum b("23");
+    LongNum c("2");
+    cout << b << ' ' << a << endl;
+    cout << a + b << endl;
+    cout << a - b << endl;
+    cout << a * c << endl;
+    return 0;
+}*/

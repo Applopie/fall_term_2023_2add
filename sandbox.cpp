@@ -7,7 +7,11 @@ using namespace std;
 
 int main()
 {
-    vector<int> digits = {1, 2, 3, 4, 5};
-    cout << digits.size() << endl;
+    string value = "124";
+    vector<int> digits;
+    int a = value[1] - '0';
+    cout << a;
+    digits.push_back(a);
+    cout << digits[0];
     return 0;
 }
