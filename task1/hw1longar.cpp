@@ -8,6 +8,9 @@ using u16 = uint16_t;
 class LongNum
 {
 public:
+    vector<u16> digits;
+    bool sign;
+
     LongNum() // zero constructor
     {
         sign = true;
@@ -21,7 +24,7 @@ public:
             LongNum();
         }
 
-        len = 0;
+        u16 len = 0;
         if (value[0] == '-')
         {
             sign = false;
@@ -31,7 +34,7 @@ public:
         {
             sign = true;
         }
-        for (int i = len; i < value.lenght(); i++)
+        for (int i = len; i < value.length(); i++)
         {
             digits.push_back(value.at(i));
         }
@@ -228,7 +231,7 @@ public:
     {
         if ((sign && rhs.sign) || (!sign && !rhs.sign))
         {
-            return summarizing(*this, b);
+            return summarizing(*this, rhs);
         }
         if (sign && !rhs.sign)
         {
@@ -310,8 +313,8 @@ public:
     LongNum operator*(LongNum &lhs) const
     {
         LongNum result;
-        rhsl = digits.size();
-        lhsl = lhs.digits.size();
+        u16 rhsl = digits.size();
+        u16 lhsl = lhs.digits.size();
 
         LongNum temp;
 
@@ -325,9 +328,9 @@ public:
         }
 
         size_t zeros_to_insert = 0;
-        for (int i = rhs.digits.size() - 1; i >= 0; i--)
+        for (int i = lhs.digits.size() - 1; i >= 0; i--)
         {
-            size_t digit = rhs.digits.at(i);
+            size_t digit = lhs.digits.at(i);
             temp = multiply(*this, digit);
             temp.digits.insert(temp.digits.end(), zeros_to_insert++, 0);
             result = result + temp;
@@ -338,14 +341,11 @@ public:
 private:
     void DeleteUnnZeros()
     {
-        while (digits.size > 1 && digits.at(0) == 0)
+        while (digits.size() > 1 && digits.at(0) == 0)
         {
-            digits.erase(digits.begin(), digits.begin() + 1)
+            digits.erase(digits.begin(), digits.begin() + 1);
         }
     };
-
-    vector<u16> digits;
-    bool sign;
 
     LongNum summarizing(const LongNum &rhs, const LongNum &lhs)
     {
@@ -438,10 +438,10 @@ private:
             res = rhs.digits.at(rhsl - index - 1);
             if (decrease)
             {
-                if (sum == 0)
+                if (res == 0)
                 {
                     decrease = true;
-                    sum = 9;
+                    res = 9;
                 }
                 res = res - 1;
             }
@@ -463,7 +463,7 @@ private:
         return result;
     }
 
-    LongNum multiply(const LongNum &lhs, unsigned int lhs) const
+    LongNum multiply(const LongNum &lhs, unsigned int rhs) const
     {
         LongNum result;
         result.digits.clear();
@@ -490,7 +490,7 @@ private:
 
 std::ostream &operator<<(std::ostream &os, const LongNum &rhs)
 {
-    if (rhs.length == 0)
+    if (rhs.digits.size() == 0)
     {
         return os;
     }
