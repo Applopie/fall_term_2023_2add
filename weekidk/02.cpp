@@ -91,7 +91,13 @@ bool ReadCompChar(char *symbol, std::istream &is)
     char cand = is.peek();
     if (cand == '\\')
     {
-        return true;
+        is.get();
+        *symbol = is.peek();
+        switch (*symbol)
+        {
+        case 'n':
+            *symbol = '\n'
+        }
     }
     *symbol = cand;
     return false;
@@ -105,6 +111,30 @@ std::string ReadString(std::istream &is)
     {
         is.get();
         c = is.peek();
-        while (c != '"' &&)
+        while (c != '"' || ReadCompChar(prev, is))
+        {
+        }
+    }
+}
+
+void ReadNextToken(std::istream &is)
+{
+    char c = is.peek();
+    if (c == '"')
+    {
+        auto s = ReadString(is);
+        // TODO RETURN
+    }
+    else if (isdigit(c) || (c == '+') || (c == '-'))
+    {
+        auto s = ReadInteger(is);
+    }
+    else if (is_letter(c))
+    {
+        auto s = ReadLiteral(is);
+    }
+    else
+    {
+        Assert(false, "illegal")
     }
 }
