@@ -56,24 +56,71 @@ public:
 
 // let's go next one
 template <class T>
+struct csys
+{
+    size_t cnt, exs;
+};
 
 class sharedptr
 {
 private:
     T *uptr;
-    int count;
+    csys ccount;
 
     void increase()
     {
-        if (count != nullptr)
+        if (ccount != nullptr)
         {
-            count++;
+            ccount->cnt++;
         }
     }
 
+    void unclaim() noexcept
+    {
+        this->~sharedptr();
+
+        uptr = nullptr;
+        ccount = nullptr;
+    }
+
 public:
-    sharedptr() noexcept : uptr(), count() {}
-    sharedptr(const sharedptr)
+    sharedptr() noexcept : uptr(), ccount() {}
+    sharedptr(const sharedptr &pt) noexcept : uptr(pt.uptr), ccount(pt.count)
+    {
+        increase();
+    }
+    sharedptr &operator=(const sharedptr &pt) noexcept
+    {
+        if (ccount != pt.ccount)
+        {
+            this->~sharedptr();
+        }
+
+        uptr = pt.uptr;
+        count = pt.ccount;
+        increase();
+        return *this;
+    }
+
+    sharedptr(sharedptr &&pt) noexcept : uptr(pt.uptr), ccount(pt.ccount)
+    {
+        increase();
+        pt.unclaim();
+    }
+    sharedptr &operator=(sharedptr &&pt) noexcept
+    {
+        if (ccount != pt.ccount)
+        {
+            this->~sharedptr();
+        }
+        uptr = pt.uptr;
+        ccount = pt.ccount;
+        increase();
+        pt.reset();
+        return *this;
+    }
+
+    sharedptr(T *pt) noexcept : uptr(pt)
 };
 
 // tbf the last or the least idc anymore
