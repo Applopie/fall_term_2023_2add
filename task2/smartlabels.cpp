@@ -53,4 +53,28 @@ public:
     T *operator->() { return uptr; }
     T &operator*() { return *uptr; }
 };
-class sharedptr class weakptr
+
+// let's go next one
+template <class T>
+
+class sharedptr
+{
+private:
+    T *uptr;
+    int count;
+
+    void increase()
+    {
+        if (count != nullptr)
+        {
+            count++;
+        }
+    }
+
+public:
+    sharedptr() noexcept : uptr(), count() {}
+    sharedptr(const sharedptr)
+};
+
+// tbf the last or the least idc anymore
+class weakptr
