@@ -216,4 +216,39 @@ public:
         pt.unclaim();
         return *this;
     }
+
+    weakptr(const sharedptr<T> &pt) noexcept : uptr(pt.uptr), ccount(pt.ccount)
+    {
+        increase();
+    }
+    weakptr &operator=(sharedptr<T> &pt) noexcept
+    {
+        if (ccount != ccount)
+        {
+            this->~weakptr();
+        }
+
+        uptr = pt.uptr;
+        ccount = pt.ccount;
+        increase();
+        return *this;
+    }
+
+    ~weakptr()
+    {
+        if (ccount != nullptr)
+        {
+            ccount->wk--;
+            if (ccount->wk == 0 & ccount->st == 0)
+            {
+                delete ccount;
+            }
+        }
+    }
 };
+
+template <class T>
+sharedptr<T>::sharedptr(const weakptr<T> &pt) noexcept : uptr(pt.uptr), ccount(pt.ccount)
+{
+    increase();
+}
