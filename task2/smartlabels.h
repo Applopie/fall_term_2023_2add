@@ -8,7 +8,6 @@ private:
     {
         T *p = uptr;
         uptr = nullptr;
-        return p;
     }
 
     void unclaim(T *p) noexcept
@@ -33,15 +32,16 @@ public:
     uniqueptr() : uptr() {}
     uniqueptr(T *p) : uptr(p) {}
 
-    \\конструктор копирования и присваивание копированием
+    // конструктор копирования и присваивание копированием
     uniqueptr(const uniqueptr &o) = delete;
     uniqueptr &operator=(const uniqueptr &o) = delete;
 
-    \\конструктор перемещения и присвавание перемещением
-    uniquePtr(uniqueptr &&) = default;
-    uniqueptr &operator=(uinqueptr &&o) noexcept
+    // конструктор перемещения и присвавание перемещением
+    uniqueptr(uniqueptr &&pt) = default;
+
+    uniqueptr &operator=(uniqueptr &&pt) noexcept
     {
-        unclaim(o.claim());
+        unclaim(pt.claim());
         return *this;
     }
 
@@ -55,7 +55,6 @@ public:
 };
 
 // let's go next one
-template <class T>
 struct csys
 {
     size_t st, wk;
@@ -64,13 +63,14 @@ struct csys
 template <class T>
 class weakptr;
 
+template <class T>
 class sharedptr
 {
     friend class weakptr<T>;
 
 private:
     T *uptr;
-    csys ccount;
+    csys *ccount;
 
     void increase()
     {
@@ -130,7 +130,7 @@ public:
         ccount->st++;
     }
 
-    SharedPtr(const weakptr<T> &o) noexcept;
+    sharedptr(const weakptr<T> &o) noexcept;
 
     ~sharedptr()
     {
@@ -161,7 +161,7 @@ class weakptr
 
 private:
     T *uptr;
-    csys ccount;
+    csys *ccount;
 
     void increase()
     {
