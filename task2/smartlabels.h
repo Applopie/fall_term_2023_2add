@@ -245,6 +245,16 @@ public:
             }
         }
     }
+
+    bool outofservice() const noexcept
+    {
+        return (ccount == nullptr || ccount->st == 0);
+    }
+
+    sharedptr<T> result() noexcept
+    {
+        return sharedptr<T>(*this);
+    }
 };
 
 template <class T>

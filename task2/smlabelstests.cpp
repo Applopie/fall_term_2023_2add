@@ -58,4 +58,26 @@ TEST_CASE("sharedptr")
 
     sharedptr<int64_t> *ptc = new sharedptr<int64_t>(pt);
     REQUIRE(*(*ptc) == 10);
-}
+
+    sharedptr<int64_t> ptm(new int64_t(16));
+    sharedptr<int64_t> q = std::move(ptm);
+
+    ptm.unclaim();
+
+    REQUIRE(*q == 16);
+};
+
+TEST_CASE("weakptr")
+{
+    sharedptr<int64_t> pt(new int64_t(10));
+    sharedptr<int64_t> ptn(new int64_t(16));
+    weakptr<int64_t> p(pt);
+
+    REQUIRE(*pt == 10);
+    REQUIRE(*(p.result()) == 10);
+
+    pt = ptn;
+    p = ptn;
+
+    REQUIRE(*(p.result()) == 16);
+};
