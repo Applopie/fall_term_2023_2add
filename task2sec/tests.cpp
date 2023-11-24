@@ -119,9 +119,9 @@ TEST_CASE("Basic types for shared ptr", "[shared_ptr]")
 
 TEST_CASE("Copying shared ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> *p = new SharedPtr<int64_t>(new int64_t(25));
-    sharedptr<int64_t> *q = new SharedPtr<int64_t>(*p);
-    sharedptr<int64_t> *r = new SharedPtr<int64_t>(*q);
+    sharedptr<int64_t> *p = new sharedptr<int64_t>(new int64_t(25));
+    sharedptr<int64_t> *q = new sharedptr<int64_t>(*p);
+    sharedptr<int64_t> *r = new sharedptr<int64_t>(*q);
 
     delete p;
     delete q;
@@ -137,8 +137,8 @@ TEST_CASE("Moving shared ptr", "[shared_ptr]")
     sharedptr<int64_t> q = std::move(p);
     sharedptr<int64_t> r = std::move(q);
 
-    p.Reset();
-    q.Reset();
+    p.unclaim();
+    q.unclaim();
 
     REQUIRE((*r) == 25);
 }
@@ -178,7 +178,7 @@ TEST_CASE("Weak ptr basics", "[shared_ptr]")
     REQUIRE(*(w.result()) == 1);
 
     {
-        SharedPtr<int64_t> q(new int64_t(2));
+        sharedptr<int64_t> q(new int64_t(2));
         p = q;
         w = q;
     }
@@ -209,13 +209,13 @@ TEST_CASE("Copying weak ptr", "[shared_ptr]")
 
 TEST_CASE("Moving weak ptr", "[shared_ptr]")
 {
-    SharedPtr<int64_t> p(new int64_t(1));
-    SharedPtr<int64_t> q(new int64_t(2));
+    sharedptr<int64_t> p(new int64_t(1));
+    sharedptr<int64_t> q(new int64_t(2));
 
-    WeakPtr<int64_t> v(p), w(q);
+    weakptr<int64_t> v(p), w(q);
 
     {
-        WeakPtr<int64_t> t(std::move(v));
+        weakptr<int64_t> t(std::move(v));
         v = std::move(w);
         w = std::move(t);
     }
@@ -223,23 +223,23 @@ TEST_CASE("Moving weak ptr", "[shared_ptr]")
     REQUIRE(*p == 1);
     REQUIRE(*q == 2);
 
-    REQUIRE(*(v.Lock()) == 2);
-    REQUIRE(*(w.Lock()) == 1);
+    REQUIRE(*(v.result()) == 2);
+    REQUIRE(*(w.result()) == 1);
 }
 
 TEST_CASE("Weak ptr expires", "[shared_ptr]")
 {
-    SharedPtr<int64_t> p(new int64_t(1));
-    WeakPtr<int64_t> v(p);
+    sharedptr<int64_t> p(new int64_t(1));
+    weakptr<int64_t> v(p);
 
-    SharedPtr<int64_t> q(new int64_t(2));
+    sharedptr<int64_t> q(new int64_t(2));
     p = q;
 
     REQUIRE(*p == 2);
     REQUIRE(*q == 2);
-    REQUIRE(v.Expired());
+    REQUIRE(v.outofservice());
 
     v = q;
-    REQUIRE(!v.Expired());
-    REQUIRE(*(v.Lock()) == 2);
+    REQUIRE(!v.outofservice());
+    REQUIRE(*(v.result()) == 2);
 }

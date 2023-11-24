@@ -82,36 +82,13 @@ private:
 
     void unclaim() noexcept
     {
-        Eraser();
+        this->~sharedptr();
+
         uptr = nullptr;
         ccount = nullptr;
-    }
-
-    void Eraser()
-    {
-        if (ccount != nullptr)
-        {
-            ccount->st--;
-            if (ccount->st == 0)
-            {
-                delete uptr;
-
-                if (ccount->wk == 0)
-                {
-                    delete ccount;
-                }
-            }
-        }
     }
 
 public:
-    void unclaim() noexcept
-    {
-        Eraser();
-        uptr = nullptr;
-        ccount = nullptr;
-    }
-
     sharedptr() noexcept : uptr(), ccount() {}
     sharedptr(const sharedptr &pt) noexcept : uptr(pt.uptr), ccount(pt.ccount)
     {
@@ -121,7 +98,7 @@ public:
     {
         if (ccount != pt.ccount)
         {
-            Eraser();
+            this->~sharedptr();
         }
 
         uptr = pt.uptr;
@@ -139,12 +116,12 @@ public:
     {
         if (ccount != pt.ccount)
         {
-            Eraser();
+            this->~sharedptr();
         }
         uptr = pt.uptr;
         ccount = pt.ccount;
         increase();
-        pt.unclaim();
+        pt.reset();
         return *this;
     }
 
@@ -157,7 +134,19 @@ public:
 
     ~sharedptr()
     {
-        Eraser();
+        if (ccount != nullptr)
+        {
+            ccount->st--;
+            if (ccount->st == 0)
+            {
+                delete uptr;
+
+                if (ccount->wk == 0)
+                {
+                    delete ccount;
+                }
+            }
+        }
     }
 
     T *operator->() { return uptr; }
@@ -184,22 +173,10 @@ private:
 
     void unclaim()
     {
-        Eraser();
+        this->~weakptr();
 
         uptr = nullptr;
         ccount = nullptr;
-    }
-
-    void Eraser()
-    {
-        if (ccount != nullptr)
-        {
-            ccount->wk--;
-            if (ccount->wk == 0 & ccount->st == 0)
-            {
-                delete ccount;
-            }
-        }
     }
 
 public:
@@ -212,7 +189,7 @@ public:
     {
         if (ccount != pt.ccount)
         {
-            Eraser();
+            this->~weakptr();
         }
 
         uptr = pt.uptr;
@@ -230,7 +207,7 @@ public:
     {
         if (ccount != pt.ccount)
         {
-            Eraser();
+            this->~weakptr();
         }
 
         uptr = pt.uptr;
@@ -248,7 +225,7 @@ public:
     {
         if (ccount != ccount)
         {
-            Eraser();
+            this->~weakptr();
         }
 
         uptr = pt.uptr;
@@ -259,7 +236,14 @@ public:
 
     ~weakptr()
     {
-        Eraser();
+        if (ccount != nullptr)
+        {
+            ccount->wk--;
+            if (ccount->wk == 0 & ccount->st == 0)
+            {
+                delete ccount;
+            }
+        }
     }
 
     bool outofservice() const noexcept
