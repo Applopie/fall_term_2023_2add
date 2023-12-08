@@ -80,13 +80,6 @@ private:
         }
     }
 
-    void unclaim() noexcept
-    {
-        Eraser();
-        uptr = nullptr;
-        ccount = nullptr;
-    }
-
     void Eraser()
     {
         if (ccount != nullptr)
