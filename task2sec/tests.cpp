@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "catch.hpp"
-#include "smartlabels.h"
+#include "sptr.h"
 #include <random>
 #include <ctime>
 
@@ -43,21 +43,21 @@ Awful *make_awful(int64_t v)
 
 TEST_CASE("Basic types", "[unique_ptr]")
 {
-    uniqueptr<int64_t> p(new int64_t(25));
+    UniquePtr<int64_t> p(new int64_t(25));
 
     REQUIRE(*p == 25);
 
     *p += 4;
     REQUIRE(*p == 29);
 
-    uniqueptr<int64_t> q(new int64_t(21));
+    UniquePtr<int64_t> q(new int64_t(21));
 
     REQUIRE(*p + *q == 50);
 }
 
 TEST_CASE("More complex types", "[unique_ptr]")
 {
-    uniqueptr<std::vector<int64_t>> p(new std::vector<int64_t>(5));
+    UniquePtr<std::vector<int64_t>> p(new std::vector<int64_t>(5));
     REQUIRE(p->size() == 5);
 
     p->resize(13);
@@ -77,14 +77,14 @@ TEST_CASE("More complex types", "[unique_ptr]")
 
 TEST_CASE("Hostile types", "[unique_ptr]")
 {
-    uniqueptr<Awful> p(make_awful(4));
+    UniquePtr<Awful> p(make_awful(4));
     REQUIRE(p->Get() == 4);
     p->Inc();
     p->Inc();
     p->Inc();
     REQUIRE(p->Get() == 7);
 
-    uniqueptr q(std::move(p));
+    UniquePtr q(std::move(p));
     REQUIRE(q->Get() == 7);
     q->Dec();
     q->Dec();
@@ -96,14 +96,14 @@ TEST_CASE("Hostile types", "[unique_ptr]")
 
 TEST_CASE("Basic types for shared ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(25));
+    SharedPtr<int64_t> p(new int64_t(25));
 
     REQUIRE(*p == 25);
 
     *p += 4;
     REQUIRE(*p == 29);
 
-    sharedptr<int64_t> q(new int64_t(21));
+    SharedPtr<int64_t> q(new int64_t(21));
 
     REQUIRE(*p + *q == 50);
 
@@ -119,9 +119,9 @@ TEST_CASE("Basic types for shared ptr", "[shared_ptr]")
 
 TEST_CASE("Copying shared ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> *p = new sharedptr<int64_t>(new int64_t(25));
-    sharedptr<int64_t> *q = new sharedptr<int64_t>(*p);
-    sharedptr<int64_t> *r = new sharedptr<int64_t>(*q);
+    SharedPtr<int64_t> *p = new SharedPtr<int64_t>(new int64_t(25));
+    SharedPtr<int64_t> *q = new SharedPtr<int64_t>(*p);
+    SharedPtr<int64_t> *r = new SharedPtr<int64_t>(*q);
 
     delete p;
     delete q;
@@ -133,26 +133,26 @@ TEST_CASE("Copying shared ptr", "[shared_ptr]")
 
 TEST_CASE("Moving shared ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(25));
-    sharedptr<int64_t> q = std::move(p);
-    sharedptr<int64_t> r = std::move(q);
+    SharedPtr<int64_t> p(new int64_t(25));
+    SharedPtr<int64_t> q = std::move(p);
+    SharedPtr<int64_t> r = std::move(q);
 
-    p.unclaim();
-    q.unclaim();
+    p.Reset();
+    q.Reset();
 
     REQUIRE((*r) == 25);
 }
 
 TEST_CASE("Hostile types with shared ptr", "[shared_ptr]")
 {
-    sharedptr<Awful> p(make_awful(4));
+    SharedPtr<Awful> p(make_awful(4));
     REQUIRE(p->Get() == 4);
     p->Inc();
     p->Inc();
     p->Inc();
     REQUIRE(p->Get() == 7);
 
-    sharedptr q(std::move(p));
+    SharedPtr q(std::move(p));
     REQUIRE(q->Get() == 7);
     q->Dec();
     q->Dec();
@@ -171,31 +171,31 @@ TEST_CASE("Hostile types with shared ptr", "[shared_ptr]")
 
 TEST_CASE("Weak ptr basics", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(1));
-    weakptr w(p);
+    SharedPtr<int64_t> p(new int64_t(1));
+    WeakPtr w(p);
 
     REQUIRE(*p == 1);
-    REQUIRE(*(w.result()) == 1);
+    REQUIRE(*(w.Lock()) == 1);
 
     {
-        sharedptr<int64_t> q(new int64_t(2));
+        SharedPtr<int64_t> q(new int64_t(2));
         p = q;
         w = q;
     }
 
     REQUIRE(*p == 2);
-    REQUIRE(*(w.result()) == 2);
+    REQUIRE(*(w.Lock()) == 2);
 }
 
 TEST_CASE("Copying weak ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(1));
-    sharedptr<int64_t> q(new int64_t(2));
+    SharedPtr<int64_t> p(new int64_t(1));
+    SharedPtr<int64_t> q(new int64_t(2));
 
-    weakptr<int64_t> v(p), w(q);
+    WeakPtr<int64_t> v(p), w(q);
 
     {
-        weakptr<int64_t> t(v);
+        WeakPtr<int64_t> t(v);
         v = w;
         w = t;
     }
@@ -203,19 +203,19 @@ TEST_CASE("Copying weak ptr", "[shared_ptr]")
     REQUIRE(*p == 1);
     REQUIRE(*q == 2);
 
-    REQUIRE(*(v.result()) == 2);
-    REQUIRE(*(w.result()) == 1);
+    REQUIRE(*(v.Lock()) == 2);
+    REQUIRE(*(w.Lock()) == 1);
 }
 
 TEST_CASE("Moving weak ptr", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(1));
-    sharedptr<int64_t> q(new int64_t(2));
+    SharedPtr<int64_t> p(new int64_t(1));
+    SharedPtr<int64_t> q(new int64_t(2));
 
-    weakptr<int64_t> v(p), w(q);
+    WeakPtr<int64_t> v(p), w(q);
 
     {
-        weakptr<int64_t> t(std::move(v));
+        WeakPtr<int64_t> t(std::move(v));
         v = std::move(w);
         w = std::move(t);
     }
@@ -223,23 +223,23 @@ TEST_CASE("Moving weak ptr", "[shared_ptr]")
     REQUIRE(*p == 1);
     REQUIRE(*q == 2);
 
-    REQUIRE(*(v.result()) == 2);
-    REQUIRE(*(w.result()) == 1);
+    REQUIRE(*(v.Lock()) == 2);
+    REQUIRE(*(w.Lock()) == 1);
 }
 
 TEST_CASE("Weak ptr expires", "[shared_ptr]")
 {
-    sharedptr<int64_t> p(new int64_t(1));
-    weakptr<int64_t> v(p);
+    SharedPtr<int64_t> p(new int64_t(1));
+    WeakPtr<int64_t> v(p);
 
-    sharedptr<int64_t> q(new int64_t(2));
+    SharedPtr<int64_t> q(new int64_t(2));
     p = q;
 
     REQUIRE(*p == 2);
     REQUIRE(*q == 2);
-    REQUIRE(v.outofservice());
+    REQUIRE(v.Expired());
 
     v = q;
-    REQUIRE(!v.outofservice());
-    REQUIRE(*(v.result()) == 2);
+    REQUIRE(!v.Expired());
+    REQUIRE(*(v.Lock()) == 2);
 }
