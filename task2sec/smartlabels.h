@@ -4,10 +4,11 @@ class uniqueptr
 private:
     T *uptr;
 
-    void claim() noexcept
+    T *claim() noexcept
     {
         T *p = uptr;
         uptr = nullptr;
+        return p;
     }
 
     void unclaim(T *p) noexcept
