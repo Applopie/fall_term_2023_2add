@@ -32,7 +32,6 @@ int main() {
         bool found = false;
         const auto& bucket = words[len];
         
-        // Оптимизация: если слов мало, проходим по ним
         if (bucket.size() <= 1000) {
             for (const string& w : bucket) {
                 int diff = 0;
@@ -48,7 +47,6 @@ int main() {
                 }
             }
         } 
-        // Если слов много, генерируем варианты
         else {
             string temp = query;
             for (int pos = 0; pos < len && !found; pos++) {
